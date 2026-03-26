@@ -29,22 +29,6 @@ It finds the best mix of stocks based on return and risk and displays the result
 - yfinance
 - HTML
 
-## Project Structure
-
-portfolio_project/
-│
-├── data.py
-├── portfolio.py
-├── optimize.py
-├── visualize.py
-├── capm.py
-├── main.py
-│
-└── web/
-    ├── index.html
-    ├── results.json
-    └── frontier.png
-
 ## How to Run
 
 1. Run the model:
