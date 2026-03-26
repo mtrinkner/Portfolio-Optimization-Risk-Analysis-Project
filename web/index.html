@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Dashboard</title>
+</head>
+
+<body style="font-family: Arial; background:#0f172a; color:white; text-align:center;">
+
+<h1>Portfolio Optimization</h1>
+
+<p>Shows the best and safest portfolio based on returns and risk.</p>
+
+<div style="background:#1e293b; padding:15px; margin:15px;">
+    <h2>Best Portfolio</h2>
+    <pre id="max"></pre>
+</div>
+
+<div style="background:#1e293b; padding:15px; margin:15px;">
+    <h2>Safest Portfolio</h2>
+    <pre id="min"></pre>
+</div>
+
+<div style="background:#1e293b; padding:15px; margin:15px;">
+    <h2>Weights</h2>
+    <ul id="weights"></ul>
+</div>
+
+<div style="background:#1e293b; padding:15px; margin:15px;">
+    <h2>Efficient Frontier</h2>
+    <img src="frontier.png" width="300">
+</div>
+
+<script>
+fetch("results.json")
+.then(res => res.json())
+.then(data => {
+
+    document.getElementById("weights").innerHTML = "";
+
+    let dReturn = (data.max_sharpe.return * 100).toFixed(2);
+    let dRisk = (data.max_sharpe.vol * 100).toFixed(2);
+
+    let yReturn = (data.max_sharpe.return * 252 * 100).toFixed(2);
+    let yRisk = (data.max_sharpe.vol * Math.sqrt(252) * 100).toFixed(2);
+
+    let sdReturn = (data.min_vol.return * 100).toFixed(2);
+    let syReturn = (data.min_vol.return * 252 * 100).toFixed(2);
+
+    let sdRisk = (data.min_vol.vol * 100).toFixed(2);
+    let syRisk = (data.min_vol.vol * Math.sqrt(252) * 100).toFixed(2);
+
+    document.getElementById("max").innerText =
+        "Daily Return: " + dReturn + "%\n" +
+        "Yearly Return: " + yReturn + "%\n\n" +
+        "Daily Risk: " + dRisk + "%\n" +
+        "Yearly Risk: " + yRisk + "%\n\n" +
+        "Alpha: " + data.max_sharpe.alpha.toFixed(4) + "\n" +
+        "Beta: " + data.max_sharpe.beta.toFixed(2);
+
+    document.getElementById("min").innerText =
+        "Daily Return: " + sdReturn + "%\n" +
+        "Yearly Return: " + syReturn + "%\n\n" +
+        "Daily Risk: " + sdRisk + "%\n" +
+        "Yearly Risk: " + syRisk + "%";
+
+    let names = ["META", "AMD", "MSFT"];
+    let w = data.max_sharpe.weights;
+
+    for (let i = 0; i < w.length; i++) {
+        let li = document.createElement("li");
+        li.innerText = names[i] + ": " + (w[i] * 100).toFixed(0) + "%";
+        document.getElementById("weights").appendChild(li);
+    }
+
+});
+</script>
+
+</body>
+</html>
